@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Plus, ClipboardList } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";

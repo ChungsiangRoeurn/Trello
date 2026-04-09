@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTelegramUser } from "@/hooks/useTelegramUser";
 
 interface Props {
   onDone: () => void;
@@ -10,6 +11,8 @@ type Phase = "enter" | "visible" | "exit";
 
 export function SplashScreen({ onDone }: Props) {
   const [phase, setPhase] = useState<Phase>("enter");
+
+  const user = useTelegramUser()
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase("visible"), 100);
@@ -25,7 +28,8 @@ export function SplashScreen({ onDone }: Props) {
   return (
     <div
       className={cn(
-        "absolute inset-0 z-50 flex flex-col items-center justify-center bg-indigo-600",
+        "absolute inset-0 z-50 flex flex-col items-center justify-center",
+        "bg-gray-950 dark:bg-gray-900", // ✅ here
         "transition-opacity duration-500",
         phase === "enter" && "opacity-0",
         phase === "visible" && "opacity-100",
@@ -43,11 +47,13 @@ export function SplashScreen({ onDone }: Props) {
       >
         <div className="w-24 h-24 bg-white/20 rounded-3xl flex items-center justify-center ring-4 ring-white/10">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-            <ClipboardList size={32} className="text-indigo-600" />
+            <ClipboardList size={32} className="text-gray-950" />
           </div>
         </div>
         <div className="text-center">
-          <h1 className="text-4xl font-black text-white tracking-tight">Taskly</h1>
+          <h1 className="text-4xl font-black text-white tracking-tight">
+            {user?.name || "Taskly"}
+          </h1>
           <p className="text-indigo-200 text-sm mt-1 font-medium">
             Stay focused. Get things done.
           </p>

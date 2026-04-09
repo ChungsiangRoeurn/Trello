@@ -1,12 +1,7 @@
 import type { Category, CategoryConfig } from "@/types";
+import dayjs from "dayjs";
 
-export const TODAY = "2026-04-08";
-
-// export const USER = {
-//   name: "Chungsiang",
-//   initials: "CS",
-//   email: "chungsiang@trello.app",
-// };
+export const TODAY = dayjs().format("YYYY-MM-DD");
 
 export const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
   Work: {

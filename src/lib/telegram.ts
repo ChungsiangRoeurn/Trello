@@ -10,8 +10,18 @@ export const getTelegramUser = (): TelegramUser => {
     };
   }
 
-  const tg = window.Telegram?.WebApp;
-  const user = tg?.initDataUnsafe?.user;
+  const tg = (window as any)?.Telegram?.WebApp;
+
+  if (!tg) {
+    return {
+      name: "Guest",
+      username: "guest",
+      initials: "G",
+      id: null,
+    };
+  }
+
+  const user = tg.initDataUnsafe?.user;
 
   if (!user) {
     return {
@@ -29,10 +39,10 @@ export const getTelegramUser = (): TelegramUser => {
 
   return {
     name,
-    username: user.username ?? "unknown", // ✅ fix هنا
+    username: user.username ?? "unknown",
     initials: name
       .split(" ")
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join("")
       .toUpperCase(),
     id: user.id ?? null,

@@ -11,8 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { SettingsGroup } from "@/components/common/SettingsGroup";
-import { USER } from "@/constants";
 import type { SettingsRowItem } from "@/components/common/SettingsGroup";
+import { useTelegramUser } from "@/hooks/useTelegramUser";
 
 interface Props {
   darkMode: boolean;
@@ -46,6 +46,8 @@ export function SettingsScreen({ darkMode, onToggleDark }: Props) {
     { icon: LogOut, label: "Sign Out", type: "chevron", danger: true },
   ];
 
+  const user = useTelegramUser()
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="px-5 pt-5 pb-24 space-y-5">
@@ -59,14 +61,14 @@ export function SettingsScreen({ darkMode, onToggleDark }: Props) {
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               <Avatar className="w-14 h-14 ring-2 ring-indigo-200 dark:ring-indigo-700">
-                <AvatarFallback className="text-lg">{USER.initials}</AvatarFallback>
+                <AvatarFallback className="text-lg">{user.initials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-gray-800 dark:text-white text-base truncate">
-                  {USER.name}
+                  {user.name}
                 </p>
                 <p className="text-sm text-gray-400 dark:text-gray-500 truncate">
-                  {USER.email}
+                  {/* {user.email} */}
                 </p>
               </div>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-shrink-0">

@@ -19,31 +19,30 @@ export default function App() {
 
   return (
     <div className={dark ? "dark" : ""}>
-      <AppShell screen={screen} onNavigate={setScreen}>
-        {/* Screens */}
-        {screen === "home" && (
-          <HomeScreen
-            tasks={tasks}
-            onToggle={toggleTask}
-            onDelete={deleteTask}
-            onAddClick={() => setAddOpen(true)}
+      {!splashDone ? (
+        <SplashScreen onDone={() => setSplashDone(true)} />
+      ) : (
+        <AppShell screen={screen} onNavigate={setScreen}>
+          {screen === "home" && (
+            <HomeScreen
+              tasks={tasks}
+              onToggle={toggleTask}
+              onDelete={deleteTask}
+              onAddClick={() => setAddOpen(true)}
+            />
+          )}
+          {screen === "stats" && <StatsScreen tasks={tasks} />}
+          {screen === "settings" && (
+            <SettingsScreen darkMode={dark} onToggleDark={toggleDark} />
+          )}
+
+          <AddTaskSheet
+            open={addOpen}
+            onOpenChange={setAddOpen}
+            onSave={addTask}
           />
-        )}
-        {screen === "stats" && <StatsScreen tasks={tasks} />}
-        {screen === "settings" && (
-          <SettingsScreen darkMode={dark} onToggleDark={toggleDark} />
-        )}
-
-        {/* Add Task bottom sheet */}
-        <AddTaskSheet
-          open={addOpen}
-          onOpenChange={setAddOpen}
-          onSave={addTask}
-        />
-
-        {/* Splash screen overlay */}
-        {!splashDone && <SplashScreen onDone={() => setSplashDone(true)} />}
-      </AppShell>
+        </AppShell>
+      )}
     </div>
   );
 }

@@ -9,6 +9,8 @@ import { formatDisplayDate, pct } from "@/lib/utils";
 import { TODAY } from "@/constants";
 import { useTelegramUser } from "@/hooks/useTelegramUser";
 import type { Task } from "@/types";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 interface Props {
   tasks: Task[];
@@ -47,41 +49,41 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
         </div>
 
         {/* Progress card */}
-        {todayTasks.length > 0 && (
-          <div className="bg-indigo-600 rounded-2xl p-4 text-white">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-xs text-indigo-200 font-medium">Today's Progress</p>
-                <p className="text-xl font-black mt-0.5">
-                  {todayDone}
-                  <span className="text-indigo-300 font-semibold text-base">
-                    /{todayTasks.length} tasks
-                  </span>
-                </p>
-              </div>
-              {/* Mini circle */}
-              <div className="relative w-12 h-12">
-                <svg width="48" height="48" viewBox="0 0 48 48" className="-rotate-90">
-                  <circle cx="24" cy="24" r="18" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="5" />
-                  <circle
-                    cx="24" cy="24" r="18" fill="none"
-                    stroke="white" strokeWidth="5" strokeLinecap="round"
-                    strokeDasharray={`${2 * Math.PI * 18}`}
-                    strokeDashoffset={`${2 * Math.PI * 18 * (1 - progressValue / 100)}`}
-                    className="transition-all duration-700"
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold">
-                  {progressValue}%
-                </span>
-              </div>
-            </div>
-            <Progress
-              value={progressValue}
-              className="h-1.5 bg-white/25 [&>div]:bg-white"
-            />
-          </div>
-        )}
+        {/* Progress card */}
+{todayTasks.length > 0 && (
+  <div className="bg-indigo-600 rounded-2xl p-4 text-white">
+    <div className="flex items-center justify-between mb-3">
+      <div>
+        <p className="text-xs text-indigo-200 font-medium">Today's Progress</p>
+        <p className="text-xl font-black mt-0.5">
+          {todayDone}
+          <span className="text-indigo-300 font-semibold text-base">
+            /{todayTasks.length} tasks
+          </span>
+        </p>
+      </div>
+
+      {/* Mini circle using react-circular-progressbar */}
+      <div className="w-12 h-12">
+        <CircularProgressbar
+          value={progressValue}
+          text={`${progressValue}%`}
+          styles={buildStyles({
+            textSize: "24px",
+            pathColor: "white",
+            trailColor: "rgba(255,255,255,0.25)",
+            textColor: "white",
+          })}
+        />
+      </div>
+    </div>
+
+    <Progress
+      value={progressValue}
+      className="h-1.5 bg-white/25 [&>div]:bg-white"
+    />
+  </div>
+)}
       </div>
 
       {/* ── Tabs ── */}
@@ -134,7 +136,6 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
         </Tabs>
       </div>
 
-      {/* ── FAB ── */}
       <button
         onClick={onAddClick}
         className={cn(

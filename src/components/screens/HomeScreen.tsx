@@ -6,7 +6,8 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { formatDisplayDate, pct } from "@/lib/utils";
-import { TODAY, USER } from "@/constants";
+import { TODAY } from "@/constants";
+import { useTelegramUser } from "@/hooks/useTelegramUser";
 import type { Task } from "@/types";
 
 interface Props {
@@ -25,6 +26,8 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
   const todayCount = todayTasks.length;
   const completedCount = tasks.filter((t) => t.completed).length;
 
+  const user = useTelegramUser();
+
   return (
     <div className="flex flex-col h-full">
       {/* ── Header ── */}
@@ -35,11 +38,11 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
               {formatDisplayDate(TODAY)}
             </p>
             <h1 className="text-2xl font-black text-gray-800 dark:text-white mt-0.5 tracking-tight">
-              Hi, {USER.name} 👋
+              Hi, {user.name} 👋
             </h1>
           </div>
           <Avatar className="w-10 h-10 ring-2 ring-indigo-200 dark:ring-indigo-700">
-            <AvatarFallback>{USER.initials}</AvatarFallback>
+            <AvatarFallback>{user.initials}</AvatarFallback>
           </Avatar>
         </div>
 

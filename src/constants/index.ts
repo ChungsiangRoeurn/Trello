@@ -2,11 +2,11 @@ import type { Category, CategoryConfig } from "@/types";
 
 export const TODAY = "2026-04-08";
 
-export const USER = {
-  name: "Chungsiang",
-  initials: "CS",
-  email: "chungsiang@trello.app",
-};
+// export const USER = {
+//   name: "Chungsiang",
+//   initials: "CS",
+//   email: "chungsiang@trello.app",
+// };
 
 export const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
   Work: {

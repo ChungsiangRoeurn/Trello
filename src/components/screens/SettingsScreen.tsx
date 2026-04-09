@@ -67,9 +67,9 @@ export function SettingsScreen({ darkMode, onToggleDark }: Props) {
                 <p className="font-bold text-gray-800 dark:text-white text-base truncate">
                   {user.name}
                 </p>
-                <p className="text-sm text-gray-400 dark:text-gray-500 truncate">
-                  {/* {user.email} */}
-                </p>
+                {/* <p className="text-sm text-gray-400 dark:text-gray-500 truncate">
+                  {user.email}
+                </p> */}
               </div>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-shrink-0">
                 <ChevronRight size={15} className="text-gray-400" />

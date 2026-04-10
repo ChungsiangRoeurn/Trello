@@ -13,7 +13,7 @@ export default function App() {
   const [splashDone, setSplashDone] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
 
-  const { tasks, toggleTask, deleteTask, addTask } = useTasks();
+  const { tasks, toggleTask, deleteTask, addTask, loading } = useTasks();
   const { dark, toggle: toggleDark } = useDarkMode();
   const { screen, setScreen } = useScreen("home");
 
@@ -29,6 +29,7 @@ export default function App() {
               onToggle={toggleTask}
               onDelete={deleteTask}
               onAddClick={() => setAddOpen(true)}
+              isLoading={loading}
             />
           )}
           {screen === "stats" && <StatsScreen tasks={tasks} />}

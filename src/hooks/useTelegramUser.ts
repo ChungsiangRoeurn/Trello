@@ -12,7 +12,18 @@ export const useTelegramUser = () => {
 
   useEffect(() => {
     const tgUser = getTelegramUser();
-    setUser(tgUser);
+    
+    // If we are in the browser and tgUser doesn't have an ID
+    if (!tgUser.id) {
+      setUser({
+        name: "Dev Mode",
+        username: "dev_user",
+        initials: "D",
+        id: 88888888, // 👈 A dummy ID so useTasks actually runs
+      });
+    } else {
+      setUser(tgUser);
+    }
   }, []);
 
   return user;

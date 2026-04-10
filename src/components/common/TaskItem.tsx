@@ -28,7 +28,10 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
     >
       {/* Checkbox */}
       <button
-        onClick={() => onToggle(task.id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle(task.id);
+        }}
         className="mt-0.5 flex-shrink-0 transition-transform active:scale-90 focus:outline-none"
         aria-label={task.completed ? "Mark incomplete" : "Mark complete"}
       >
@@ -63,18 +66,21 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Delete button — visible on hover */}
       <button
-        onClick={() => onDelete(task.id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (confirm("Delete this task?")) {
+            onDelete(task.id);
+          }
+        }}
         className={cn(
           "flex-shrink-0 p-1.5 rounded-lg transition-all duration-150 focus:outline-none",
-          "opacity-0 group-hover:opacity-100",
           "hover:bg-red-50 dark:hover:bg-red-900/20",
           "active:scale-90"
         )}
         aria-label="Delete task"
       >
-        <Trash2 size={14} className="text-red-400" />
+        <Trash2 size={16} className="text-red-400" />
       </button>
     </div>
   );

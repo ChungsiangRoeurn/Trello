@@ -1,9 +1,7 @@
 import {
   Bell,
-  Moon,
   Shield,
   HelpCircle,
-  LogOut,
   ChevronRight,
   Palette,
 } from "lucide-react";
@@ -16,12 +14,10 @@ import { useTelegramUser } from "@/hooks/useTelegramUser";
 import { Task } from "@/types";
 
 interface Props {
-  darkMode: boolean;
-  onToggleDark: (val: boolean) => void;
   tasks: Task[];
 }
 
-export function SettingsScreen({ darkMode, onToggleDark, tasks = [] }: Props) {
+export function SettingsScreen({ tasks = [] }: Props) {
 
   const user = useTelegramUser();
   const safeTasks = Array.isArray(tasks) ? tasks : [];
@@ -32,13 +28,7 @@ export function SettingsScreen({ darkMode, onToggleDark, tasks = [] }: Props) {
   const streak = "5d";
 
   const preferenceItems: SettingsRowItem[] = [
-    {
-      icon: Moon,
-      label: "Dark Mode",
-      type: "toggle",
-      value: darkMode,
-      onChange: onToggleDark,
-    },
+
     {
       icon: Bell,
       label: "Notifications",
@@ -54,7 +44,6 @@ export function SettingsScreen({ darkMode, onToggleDark, tasks = [] }: Props) {
   const accountItems: SettingsRowItem[] = [
     { icon: Shield, label: "Privacy & Security", type: "chevron" },
     { icon: HelpCircle, label: "Help & Support", type: "chevron" },
-    { icon: LogOut, label: "Sign Out", type: "chevron", danger: true },
   ];
 
   return (

@@ -6,7 +6,6 @@ import { AddTaskSheet } from "@/components/screens/AddTaskSheet";
 import { StatsScreen } from "@/components/screens/StatsScreen";
 import { SettingsScreen } from "@/components/screens/SettingsScreen";
 import { useTasks } from "@/hooks/useTasks";
-import { useDarkMode } from "@/hooks/useDarkMode";
 import { useScreen } from "@/hooks/useScreen";
 import { Task } from "./types";
 
@@ -16,7 +15,6 @@ export default function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const { tasks, toggleTask, deleteTask, addTask, updateTask, loading } = useTasks();
-  const { dark, toggle: toggleDark } = useDarkMode();
   const { screen, setScreen } = useScreen("home");
 
   const handleSaveTask = async (taskData: any) => {
@@ -25,7 +23,7 @@ export default function App() {
     } else {
       await addTask(taskData);
     }
-    setEditingTask(null); // Reset after saving
+    setEditingTask(null); 
     setAddOpen(false);
   };
 
@@ -35,7 +33,7 @@ export default function App() {
   };
 
   return (
-    <div className={dark ? "dark" : ""}>
+    <div className="dark">
       {!splashDone ? (
         <SplashScreen onDone={() => setSplashDone(true)} />
       ) : (
@@ -56,7 +54,7 @@ export default function App() {
 
           {screen === "stats" && <StatsScreen tasks={tasks} />}
           {screen === "settings" && (
-            <SettingsScreen darkMode={dark} onToggleDark={toggleDark} tasks={tasks} />
+            <SettingsScreen tasks={tasks} />
           )}
 
           <AddTaskSheet

@@ -16,7 +16,7 @@ export function useTasks() {
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
-        .eq("user_id", String(user.id)) // 👈 The "Lock"
+        .eq("user_id", String(user.id)) 
         .order("id", { ascending: false });
 
       if (!error) setTasks(data || []);
@@ -27,11 +27,11 @@ export function useTasks() {
 
   useEffect(() => {
     fetchTasks();
-  }, [user?.id]); // 👈 Refetch if the user logs in/changes
+  }, [user?.id]); 
 
   const addTask = async (taskData: any) => {
     if (!user?.id) return;
-    const newTask = { ...taskData, user_id: String(user.id) }; // 👈 The "Tag"
+    const newTask = { ...taskData, user_id: String(user.id) }; 
     const { data, error } = await supabase.from("tasks").insert([newTask]).select();
     if (!error && data) setTasks([data[0], ...tasks]);
   };

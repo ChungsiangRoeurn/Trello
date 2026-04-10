@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function HomeScreen({
-  tasks = [], // Defensive default
+  tasks = [], 
   onToggle,
   onDelete,
   onAddClick,
@@ -61,7 +61,7 @@ export function HomeScreen({
               {formatDisplayDate(TODAY)}
             </p>
             <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-              Hi, {user?.name || "there"} 👋
+              Hi, {user?.name || "there"}
             </h1>
           </div>
           <Avatar className="h-11 w-11 border-2 border-white dark:border-zinc-800 shadow-sm">

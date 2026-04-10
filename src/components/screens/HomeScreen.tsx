@@ -14,12 +14,19 @@ import "react-circular-progressbar/dist/styles.css";
 
 interface Props {
   tasks: Task[];
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: number) => void | Promise<void>;
+  onDelete: (id: number) => void | Promise<void>;
   onAddClick: () => void;
+  isLoading: boolean;
 }
 
-export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
+export function HomeScreen({
+  tasks,
+  onToggle,
+  onDelete,
+  onAddClick,
+  isLoading,
+}: Props) {
   const todayTasks = tasks.filter((t) => t.date === TODAY);
   const todayDone = todayTasks.filter((t) => t.completed).length;
   const progressValue = pct(todayDone, todayTasks.length);
@@ -29,6 +36,14 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
   const completedCount = tasks.filter((t) => t.completed).length;
 
   const user = useTelegramUser();
+
+  if (isLoading && tasks.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -50,40 +65,42 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
 
         {/* Progress card */}
         {/* Progress card */}
-{todayTasks.length > 0 && (
-  <div className="bg-indigo-600 rounded-2xl p-4 text-white">
-    <div className="flex items-center justify-between mb-3">
-      <div>
-        <p className="text-xs text-indigo-200 font-medium">Today's Progress</p>
-        <p className="text-xl font-black mt-0.5">
-          {todayDone}
-          <span className="text-indigo-300 font-semibold text-base">
-            /{todayTasks.length} tasks
-          </span>
-        </p>
-      </div>
+        {todayTasks.length > 0 && (
+          <div className="bg-indigo-600 rounded-2xl p-4 text-white">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs text-indigo-200 font-medium">
+                  Today's Progress
+                </p>
+                <p className="text-xl font-black mt-0.5">
+                  {todayDone}
+                  <span className="text-indigo-300 font-semibold text-base">
+                    /{todayTasks.length} tasks
+                  </span>
+                </p>
+              </div>
 
-      {/* Mini circle using react-circular-progressbar */}
-      <div className="w-12 h-12">
-        <CircularProgressbar
-          value={progressValue}
-          text={`${progressValue}%`}
-          styles={buildStyles({
-            textSize: "24px",
-            pathColor: "white",
-            trailColor: "rgba(255,255,255,0.25)",
-            textColor: "white",
-          })}
-        />
-      </div>
-    </div>
+              {/* Mini circle using react-circular-progressbar */}
+              <div className="w-12 h-12">
+                <CircularProgressbar
+                  value={progressValue}
+                  text={`${progressValue}%`}
+                  styles={buildStyles({
+                    textSize: "24px",
+                    pathColor: "white",
+                    trailColor: "rgba(255,255,255,0.25)",
+                    textColor: "white",
+                  })}
+                />
+              </div>
+            </div>
 
-    <Progress
-      value={progressValue}
-      className="h-1.5 bg-white/25 [&>div]:bg-white"
-    />
-  </div>
-)}
+            <Progress
+              value={progressValue}
+              className="h-1.5 bg-white/25 [&>div]:bg-white"
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Tabs ── */}
@@ -101,8 +118,8 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
               tab === "All"
                 ? tasks
                 : tab === "Today"
-                ? todayTasks
-                : tasks.filter((t) => t.completed);
+                  ? todayTasks
+                  : tasks.filter((t) => t.completed);
 
             return (
               <TabsContent key={tab} value={tab}>
@@ -110,7 +127,7 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
                   className={cn(
                     "overflow-y-auto space-y-2.5 pt-3",
                     "max-h-[calc(100vh-370px)]",
-                    "pb-24"
+                    "pb-24",
                   )}
                 >
                   {filtered.length === 0 ? (
@@ -144,7 +161,7 @@ export function HomeScreen({ tasks, onToggle, onDelete, onAddClick }: Props) {
           "shadow-indigo-300 dark:shadow-indigo-900",
           "flex items-center justify-center",
           "transition-all duration-150 active:scale-90 focus:outline-none",
-          "focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
+          "focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2",
         )}
         aria-label="Add new task"
       >

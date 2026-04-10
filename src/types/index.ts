@@ -2,15 +2,6 @@ export type Category = "Work" | "Personal" | "Health" | "Learning";
 
 export type Screen = "home" | "stats" | "settings";
 
-export interface Task {
-  id: number;
-  title: string;
-  time: string;
-  date: string;
-  completed: boolean;
-  category: Category;
-}
-
 export interface CategoryConfig {
   bg: string;
   text: string;
@@ -19,3 +10,13 @@ export interface CategoryConfig {
 }
 
 export type FilterType = "All" | "Today" | "Completed";
+
+export interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+  date: string;
+  category?: string;
+  created_at: string;
+  updated_at: string;
+}

@@ -1,4 +1,4 @@
-import { Plus, ClipboardList } from "lucide-react";
+import { Plus, ClipboardList, Loader2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { TaskItem } from "@/components/common/TaskItem";
@@ -21,125 +21,115 @@ interface Props {
 }
 
 export function HomeScreen({
-  tasks,
+  tasks = [], // Defensive default
   onToggle,
   onDelete,
   onAddClick,
   isLoading,
 }: Props) {
-  const todayTasks = tasks.filter((t) => t.date === TODAY);
-  const todayDone = todayTasks.filter((t) => t.completed).length;
-  const progressValue = pct(todayDone, todayTasks.length);
-
-  const allCount = tasks.length;
-  const todayCount = todayTasks.length;
-  const completedCount = tasks.filter((t) => t.completed).length;
-
   const user = useTelegramUser();
 
-  if (isLoading && tasks.length === 0) {
+  // 1. Defensively handle data to prevent filter() crashes
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  
+  // 2. Data Filtering
+  const todayTasks = safeTasks.filter((t) => t && t.date === TODAY);
+  const todayDone = todayTasks.filter((t) => t?.completed).length;
+  const progressValue = todayTasks.length > 0 ? pct(todayDone, todayTasks.length) : 0;
+
+  const allCount = safeTasks.length;
+  const todayCount = todayTasks.length;
+  const completedCount = safeTasks.filter((t) => t?.completed).length;
+
+  // 3. Loading State - Center a spinner
+  if (isLoading && safeTasks.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+      <div className="flex flex-col items-center justify-center h-full gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <p className="text-xs text-gray-400 font-medium">Fetching your tasks...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* ── Header ── */}
-      <div className="px-5 pt-5 pb-4 flex-shrink-0">
-        <div className="flex items-start justify-between mb-4">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-zinc-950">
+      {/* ── Header Section ── */}
+      <div className="px-5 pt-6 pb-4 flex-shrink-0">
+        <div className="flex items-center justify-between mb-5">
           <div>
-            <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider">
               {formatDisplayDate(TODAY)}
             </p>
-            <h1 className="text-2xl font-black text-gray-800 dark:text-white mt-0.5 tracking-tight">
-              Hi, {user.name} 👋
+            <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+              Hi, {user?.name || "there"} 👋
             </h1>
           </div>
-          <Avatar className="w-10 h-10 ring-2 ring-indigo-200 dark:ring-indigo-700">
-            <AvatarFallback>{user.initials}</AvatarFallback>
+          <Avatar className="h-11 w-11 border-2 border-white dark:border-zinc-800 shadow-sm">
+            <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold">
+              {user?.initials || "U"}
+            </AvatarFallback>
           </Avatar>
         </div>
 
-        {/* Progress card */}
-        {/* Progress card */}
+        {/* Progress Card */}
         {todayTasks.length > 0 && (
-          <div className="bg-indigo-600 rounded-2xl p-4 text-white">
-            <div className="flex items-center justify-between mb-3">
+          <div className="bg-indigo-600 rounded-3xl p-5 text-white shadow-lg shadow-indigo-200 dark:shadow-none transition-all">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-xs text-indigo-200 font-medium">
-                  Today's Progress
-                </p>
-                <p className="text-xl font-black mt-0.5">
-                  {todayDone}
-                  <span className="text-indigo-300 font-semibold text-base">
-                    /{todayTasks.length} tasks
-                  </span>
-                </p>
+                <p className="text-xs text-indigo-100 font-medium opacity-80">Daily Progress</p>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-2xl font-black">{todayDone}</span>
+                  <span className="text-indigo-200 text-sm font-bold">/{todayTasks.length} tasks</span>
+                </div>
               </div>
-
-              {/* Mini circle using react-circular-progressbar */}
-              <div className="w-12 h-12">
+              <div className="w-14 h-14">
                 <CircularProgressbar
                   value={progressValue}
                   text={`${progressValue}%`}
                   styles={buildStyles({
-                    textSize: "24px",
-                    pathColor: "white",
-                    trailColor: "rgba(255,255,255,0.25)",
-                    textColor: "white",
+                    textSize: "26px",
+                    pathColor: "#ffffff",
+                    trailColor: "rgba(255,255,255,0.2)",
+                    textColor: "#ffffff",
+                    pathTransitionDuration: 0.5,
                   })}
                 />
               </div>
             </div>
-
-            <Progress
-              value={progressValue}
-              className="h-1.5 bg-white/25 [&>div]:bg-white"
-            />
+            <Progress value={progressValue} className="h-2 bg-white/20 [&>div]:bg-white" />
           </div>
         )}
       </div>
 
-      {/* ── Tabs ── */}
-      <div className="px-5 mb-3 flex-shrink-0">
-        <Tabs defaultValue="All">
-          <TabsList>
-            <TabsTrigger value="All">All ({allCount})</TabsTrigger>
-            <TabsTrigger value="Today">Today ({todayCount})</TabsTrigger>
-            <TabsTrigger value="Completed">Done ({completedCount})</TabsTrigger>
+      {/* ── Tabs & Content ── */}
+      <div className="px-5 flex-1 min-h-0 flex flex-col">
+        <Tabs defaultValue="All" className="flex-1 flex flex-col">
+          <TabsList className="bg-gray-200/50 dark:bg-zinc-900 p-1 rounded-xl">
+            <TabsTrigger value="All" className="rounded-lg text-xs font-bold">All {allCount}</TabsTrigger>
+            <TabsTrigger value="Today" className="rounded-lg text-xs font-bold">Today {todayCount}</TabsTrigger>
+            <TabsTrigger value="Completed" className="rounded-lg text-xs font-bold">Done {completedCount}</TabsTrigger>
           </TabsList>
 
-          {/* ── Task Lists ── */}
           {(["All", "Today", "Completed"] as const).map((tab) => {
-            const filtered =
-              tab === "All"
-                ? tasks
-                : tab === "Today"
-                  ? todayTasks
-                  : tasks.filter((t) => t.completed);
+            const filtered = tab === "All" 
+              ? safeTasks 
+              : tab === "Today" 
+                ? todayTasks 
+                : safeTasks.filter(t => t?.completed);
 
             return (
-              <TabsContent key={tab} value={tab}>
-                <div
-                  className={cn(
-                    "overflow-y-auto space-y-2.5 pt-3",
-                    "max-h-[calc(100vh-370px)]",
-                    "pb-24",
-                  )}
-                >
+              <TabsContent key={tab} value={tab} className="flex-1 mt-0 outline-none">
+                <div className="h-[calc(100vh-340px)] overflow-y-auto space-y-3 pt-4 pb-32">
                   {filtered.length === 0 ? (
                     <EmptyState
                       icon={ClipboardList}
-                      title="No tasks here"
-                      description="Tap + to add a new task"
+                      title={tab === "Completed" ? "No finished tasks" : "List is empty"}
+                      description="Click the button below to add your first task."
                     />
                   ) : (
                     filtered.map((task) => (
                       <TaskItem
-                        key={task.id}
+                        key={task.id?.toString()}
                         task={task}
                         onToggle={onToggle}
                         onDelete={onDelete}
@@ -153,19 +143,17 @@ export function HomeScreen({
         </Tabs>
       </div>
 
+      {/* ── Action Button ── */}
       <button
         onClick={onAddClick}
         className={cn(
-          "fixed bottom-20 right-5 w-14 h-14 z-30",
-          "bg-indigo-600 hover:bg-indigo-700 rounded-full shadow-xl",
-          "shadow-indigo-300 dark:shadow-indigo-900",
-          "flex items-center justify-center",
-          "transition-all duration-150 active:scale-90 focus:outline-none",
-          "focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2",
+          "fixed bottom-24 right-6 w-14 h-14 z-50",
+          "bg-indigo-600 hover:bg-indigo-700 rounded-2xl shadow-xl shadow-indigo-300 dark:shadow-none",
+          "flex items-center justify-center text-white transition-all",
+          "active:scale-90 active:rotate-45"
         )}
-        aria-label="Add new task"
       >
-        <Plus size={24} className="text-white" />
+        <Plus size={32} strokeWidth={3} />
       </button>
     </div>
   );

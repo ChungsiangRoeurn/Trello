@@ -5,7 +5,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetCloseButton,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,76 +27,87 @@ export function AddTaskSheet({ open, onOpenChange, onSave, editingTask }: Props)
   const [category, setCategory] = useState<Category>("Work");
 
   useEffect(() => {
-    if (editingTask) {
+    if (editingTask && open) {
       setTitle(editingTask.title);
       setCategory(editingTask.category);
-    } else {
+      setDate(editingTask.date);
+
+      if (editingTask.time) {
+        const [t, mod] = editingTask.time.split(" ");
+        let [h, m] = t.split(":");
+        let hNum = parseInt(h, 10);
+        if (mod === "PM" && hNum < 12) hNum += 12;
+        if (mod === "AM" && hNum === 12) hNum = 0;
+        setTime(`${hNum.toString().padStart(2, '0')}:${m}`);
+      }
+    } else if (open) {
       setTitle("");
+      setDate(TODAY);
+      setTime("09:00");
+      setCategory("Work");
     }
   }, [editingTask, open]);
 
   const handleSave = () => {
     if (!title.trim()) return;
     onSave({ title, date, time: to12Hour(time), category });
-    setTitle("");
-    setDate(TODAY);
-    setTime("09:00");
-    setCategory("Work");
     onOpenChange(false);
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="px-6 pt-6 pb-10 max-h-[90vh] overflow-y-auto">
+      <SheetContent 
+        side="bottom" 
+        className="px-6 pt-6 pb-10 max-h-[90vh] overflow-y-auto bg-zinc-900 border-zinc-800 text-zinc-100"
+      >
         <SheetHeader>
-          <SheetTitle>New Task</SheetTitle>
-          <SheetCloseButton />
+          <SheetTitle className="text-white">
+            {editingTask ? "Edit Task" : "New Task"}
+          </SheetTitle>
         </SheetHeader>
 
-        <div className="space-y-5">
-          {/* Title */}
+        <div className="space-y-5 mt-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
               Task Title
             </label>
             <Input
               autoFocus
               placeholder="What do you need to do?"
+              className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 focus:ring-indigo-500"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSave()}
             />
           </div>
 
-          {/* Date + Time */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1">
                 <Calendar size={10} /> Date
               </label>
               <Input
                 type="date"
                 value={date}
+                className="bg-zinc-800 border-zinc-700 text-white text-xs"
                 onChange={(e) => setDate(e.target.value)}
-                className="text-xs"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-1">
+              <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1">
                 <Clock size={10} /> Time
               </label>
               <Input
                 type="time"
                 value={time}
+                className="bg-zinc-800 border-zinc-700 text-white text-xs"
                 onChange={(e) => setTime(e.target.value)}
-                className="text-xs"
               />
             </div>
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
               Category
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -111,8 +121,8 @@ export function AddTaskSheet({ open, onOpenChange, onSave, editingTask }: Props)
                     className={cn(
                       "px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-95 focus:outline-none",
                       active
-                        ? `${cfg.bg} ${cfg.text} ring-2 ring-offset-1 ring-indigo-400`
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        ? `${cfg.bg} ${cfg.text} ring-2 ring-offset-1 ring-indigo-500`
+                        : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
                     )}
                   >
                     {cat}
@@ -122,16 +132,18 @@ export function AddTaskSheet({ open, onOpenChange, onSave, editingTask }: Props)
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-1">
             <Button
               variant="secondary"
-              className="flex-1"
+              className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-none"
               onClick={() => onOpenChange(false)}
             >
               Cancel
             </Button>
-            <Button onClick={handleSave}>
+            <Button 
+              onClick={handleSave}
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
               {editingTask ? "Update Task" : "Save Task"}
             </Button>
           </div>

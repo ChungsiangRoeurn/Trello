@@ -59,7 +59,7 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
               {task.time}
             </span>
           )}
-          <CategoryBadge category={task.category} />
+          <CategoryBadge category={task.category || "Others"} />
         </div>
       </div>
 

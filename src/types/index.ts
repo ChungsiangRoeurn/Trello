@@ -16,7 +16,8 @@ export interface Task {
   title: string;
   completed: boolean;
   date: string;
-  category?: string;
+  time: string;
+  category: Category;
   created_at: string;
   updated_at: string;
 }

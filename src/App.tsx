@@ -34,7 +34,7 @@ export default function App() {
           )}
           {screen === "stats" && <StatsScreen tasks={tasks} />}
           {screen === "settings" && (
-            <SettingsScreen darkMode={dark} onToggleDark={toggleDark} />
+            <SettingsScreen darkMode={dark} onToggleDark={toggleDark} tasks={tasks} />
           )}
 
           <AddTaskSheet

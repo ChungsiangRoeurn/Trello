@@ -1,9 +1,9 @@
-import type { Category, CategoryConfig } from "@/types";
+import type { Category } from "@/types";
 import dayjs from "dayjs";
 
 export const TODAY = dayjs().format("YYYY-MM-DD");
 
-export const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
+export const CATEGORY_CONFIG: Record<string, any> = {
   Work: {
     bg: "bg-sky-100 dark:bg-sky-900/40",
     text: "text-sky-700 dark:text-sky-300",
@@ -15,6 +15,12 @@ export const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
     text: "text-violet-700 dark:text-violet-300",
     dot: "bg-violet-500",
     barColor: "bg-violet-500",
+  },
+  Shopping: {
+    bg: "bg-pink-100 dark:bg-pink-900/40",
+    text: "text-pink-700 dark:text-pink-300",
+    dot: "bg-pink-500",
+    barColor: "bg-pink-500",
   },
   Health: {
     bg: "bg-emerald-100 dark:bg-emerald-900/40",
@@ -30,4 +36,4 @@ export const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
   },
 };
 
-export const CATEGORIES: Category[] = ["Work", "Personal", "Health", "Learning"];
+export const CATEGORIES = Object.keys(CATEGORY_CONFIG) as Category[];

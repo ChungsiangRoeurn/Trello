@@ -116,7 +116,7 @@ export function SettingsScreen({ darkMode, onToggleDark, tasks = [] }: Props) {
         </div>
 
         <p className="text-center text-xs text-gray-300 dark:text-gray-600">
-          Trello v1.0.0 — Made with ♥
+          Trello v1.0.0 — Built By JS.♥
         </p>
       </div>
     </div>

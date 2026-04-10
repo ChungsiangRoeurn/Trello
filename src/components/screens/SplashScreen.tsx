@@ -44,15 +44,13 @@ export function SplashScreen({ onDone }: Props) {
           phase === "exit" && "scale-110 -translate-y-2"
         )}
       >
-        {/* Logo container */}
-        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl p-3 ring-1 ring-black/5">
-          <img
-            src="/logo/trello-img.png"
-            alt="logo"
-            className="w-full h-full object-contain"
-          />
-        </div>
-
+        <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-2xl">
+  <img
+    src="/logo/trello-image.png"
+    alt="logo"
+    className="w-[140%] h-[140%] object-contain"
+  />
+</div>
         {/* Text */}
         <div className="text-center">
           <h1 className="text-4xl font-black text-white tracking-tight">
@@ -90,4 +88,4 @@ export function SplashScreen({ onDone }: Props) {
       </div>
     </div>
   );
-}
+} 

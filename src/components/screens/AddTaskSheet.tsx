@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar, Clock } from "lucide-react";
 import {
   Sheet,
@@ -12,24 +12,33 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { CATEGORIES, CATEGORY_CONFIG, TODAY } from "@/constants";
 import { to12Hour } from "@/lib/utils";
-import type { Category } from "@/types";
+import type { Category, Task } from "@/types";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (data: { title: string; date: string; time: string; category: Category }) => void;
+  editingTask?: Task | null;
 }
 
-export function AddTaskSheet({ open, onOpenChange, onSave }: Props) {
+export function AddTaskSheet({ open, onOpenChange, onSave, editingTask }: Props) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(TODAY);
   const [time, setTime] = useState("09:00");
   const [category, setCategory] = useState<Category>("Work");
 
+  useEffect(() => {
+    if (editingTask) {
+      setTitle(editingTask.title);
+      setCategory(editingTask.category);
+    } else {
+      setTitle("");
+    }
+  }, [editingTask, open]);
+
   const handleSave = () => {
     if (!title.trim()) return;
     onSave({ title, date, time: to12Hour(time), category });
-    // Reset
     setTitle("");
     setDate(TODAY);
     setTime("09:00");
@@ -122,12 +131,8 @@ export function AddTaskSheet({ open, onOpenChange, onSave }: Props) {
             >
               Cancel
             </Button>
-            <Button
-              className="flex-1"
-              disabled={!title.trim()}
-              onClick={handleSave}
-            >
-              Save Task
+            <Button onClick={handleSave}>
+              {editingTask ? "Update Task" : "Save Task"}
             </Button>
           </div>
         </div>

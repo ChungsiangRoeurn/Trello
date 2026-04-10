@@ -10,13 +10,13 @@ export function useTasks() {
 
   const fetchTasks = async () => {
     if (!user?.id) return; // Wait until Telegram gives us the ID
-    
+
     try {
       setLoading(true);
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
-        .eq("user_id", String(user.id)) 
+        .eq("user_id", String(user.id))
         .order("id", { ascending: false });
 
       if (!error) setTasks(data || []);
@@ -27,11 +27,11 @@ export function useTasks() {
 
   useEffect(() => {
     fetchTasks();
-  }, [user?.id]); 
+  }, [user?.id]);
 
   const addTask = async (taskData: any) => {
     if (!user?.id) return;
-    const newTask = { ...taskData, user_id: String(user.id) }; 
+    const newTask = { ...taskData, user_id: String(user.id) };
     const { data, error } = await supabase.from("tasks").insert([newTask]).select();
     if (!error && data) setTasks([data[0], ...tasks]);
   };
@@ -45,7 +45,7 @@ export function useTasks() {
       .from("tasks")
       .update({ completed: !task.completed })
       .eq("id", id)
-      .eq("user_id", String(user.id)); 
+      .eq("user_id", String(user.id));
 
     if (!error) {
       setTasks(prev => prev.map(t => String(t.id) === String(id) ? { ...t, completed: !t.completed } : t));
@@ -58,12 +58,27 @@ export function useTasks() {
       .from("tasks")
       .delete()
       .eq("id", id)
-      .eq("user_id", String(user.id)); 
+      .eq("user_id", String(user.id));
 
     if (!error) {
       setTasks(prev => prev.filter((t) => String(t.id) !== String(id)));
     }
   };
 
-  return { tasks, loading, addTask, toggleTask, deleteTask };
+  const updateTask = async (id: number, updates: Partial<Task>) => {
+    if (!user?.id) return;
+
+    const { data, error } = await supabase
+      .from("tasks")
+      .update(updates)
+      .eq("id", id)
+      .eq("user_id", String(user.id)) // Security: Only my tasks
+      .select();
+
+    if (!error && data) {
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, ...data[0] } : t));
+    }
+  };
+
+  return { tasks, loading, addTask, toggleTask, deleteTask, updateTask };
 }

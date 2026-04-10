@@ -8,14 +8,31 @@ import { SettingsScreen } from "@/components/screens/SettingsScreen";
 import { useTasks } from "@/hooks/useTasks";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useScreen } from "@/hooks/useScreen";
+import { Task } from "./types";
 
 export default function App() {
   const [splashDone, setSplashDone] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  const { tasks, toggleTask, deleteTask, addTask, loading } = useTasks();
+  const { tasks, toggleTask, deleteTask, addTask, updateTask, loading } = useTasks();
   const { dark, toggle: toggleDark } = useDarkMode();
   const { screen, setScreen } = useScreen("home");
+
+  const handleSaveTask = async (taskData: any) => {
+    if (editingTask) {
+      await updateTask(editingTask.id, taskData);
+    } else {
+      await addTask(taskData);
+    }
+    setEditingTask(null); // Reset after saving
+    setAddOpen(false);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setAddOpen(open);
+    if (!open) setEditingTask(null); 
+  };
 
   return (
     <div className={dark ? "dark" : ""}>
@@ -30,8 +47,13 @@ export default function App() {
               onDelete={deleteTask}
               onAddClick={() => setAddOpen(true)}
               isLoading={loading}
+              onTaskClick={(task) => {
+                setEditingTask(task);
+                setAddOpen(true);
+              }}
             />
           )}
+
           {screen === "stats" && <StatsScreen tasks={tasks} />}
           {screen === "settings" && (
             <SettingsScreen darkMode={dark} onToggleDark={toggleDark} tasks={tasks} />
@@ -39,8 +61,9 @@ export default function App() {
 
           <AddTaskSheet
             open={addOpen}
-            onOpenChange={setAddOpen}
-            onSave={addTask}
+            onOpenChange={handleOpenChange}
+            editingTask={editingTask}
+            onSave={handleSaveTask} 
           />
         </AppShell>
       )}

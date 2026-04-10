@@ -17,21 +17,23 @@ interface Props {
   onToggle: (id: number) => void | Promise<void>;
   onDelete: (id: number) => void | Promise<void>;
   onAddClick: () => void;
+  onTaskClick: (task: Task) => void
   isLoading: boolean;
 }
 
 export function HomeScreen({
-  tasks = [], 
+  tasks = [],
   onToggle,
   onDelete,
   onAddClick,
+  onTaskClick,
   isLoading,
 }: Props) {
   const user = useTelegramUser();
 
   // 1. Defensively handle data to prevent filter() crashes
   const safeTasks = Array.isArray(tasks) ? tasks : [];
-  
+
   // 2. Data Filtering
   const todayTasks = safeTasks.filter((t) => t && t.date === TODAY);
   const todayDone = todayTasks.filter((t) => t?.completed).length;
@@ -111,10 +113,10 @@ export function HomeScreen({
           </TabsList>
 
           {(["All", "Today", "Completed"] as const).map((tab) => {
-            const filtered = tab === "All" 
-              ? safeTasks 
-              : tab === "Today" 
-                ? todayTasks 
+            const filtered = tab === "All"
+              ? safeTasks
+              : tab === "Today"
+                ? todayTasks
                 : safeTasks.filter(t => t?.completed);
 
             return (
@@ -128,12 +130,13 @@ export function HomeScreen({
                     />
                   ) : (
                     filtered.map((task) => (
-                      <TaskItem
-                        key={task.id?.toString()}
-                        task={task}
-                        onToggle={onToggle}
-                        onDelete={onDelete}
-                      />
+                      <div onClick={() => onTaskClick(task)} className="cursor-pointer">
+                        <TaskItem
+                          task={task}
+                          onToggle={onToggle}
+                          onDelete={onDelete}
+                        />
+                      </div>
                     ))
                   )}
                 </div>
